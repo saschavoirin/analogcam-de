@@ -1,9 +1,9 @@
 export const site = {
   title: "analogcam.de",
-  description: "Analoge Fotografien in ruhiger, reduzierter Form.",
+  description: "Ein ruhiges, kuratiertes Archiv analoger Fotografien.",
   url: "https://analogcam.de",
   intro:
-    "Analoge Fotografien in stillen Serien. Reduziert auf Licht, Zeit und das Bild.",
+    "Ein stilles Archiv analoger Fotografien: reduziert auf Licht, Material und die Ruhe eines einzelnen Bildes.",
   defaultOgImage: "",
   owner: {
     name: "",

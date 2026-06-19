@@ -16,8 +16,8 @@ const groups = groupArchivedAlbumsByYear(archivedAlbums);
     <p class="eyebrow">Archiv</p>
     <h1 id="archive-title">Archivierte Alben</h1>
     <p>
-      Ältere Alben verschwinden nicht. Sie werden hier gesammelt und bleiben
-      über ihre direkten URLs erreichbar.
+      Ältere Serien bleiben erhalten, geordnet nach Jahr und weiterhin über
+      ihre direkten URLs erreichbar.
     </p>
   </section>
 
@@ -41,9 +41,17 @@ const groups = groupArchivedAlbumsByYear(archivedAlbums);
         ))}
       </div>
     ) : (
-      <section class="empty-state">
-        <h2>Kein Archivinhalt</h2>
-        <p>Archivierte Alben erscheinen hier, sobald ihr Status auf archived gesetzt wurde.</p>
+      <section class="empty-state empty-state--archive" aria-labelledby="archive-empty-title">
+        <div class="empty-state__copy">
+          <p class="eyebrow">Magazin</p>
+          <h2 id="archive-empty-title">Kein Archivinhalt</h2>
+          <p>Archivierte Alben erscheinen hier, sobald ältere Serien aus der Startansicht wandern.</p>
+        </div>
+        <div class="archive-spool" aria-hidden="true">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
       </section>
     )
   }

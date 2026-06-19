@@ -3,28 +3,41 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import { site } from "@config/site";
 
 const owner = site.owner;
+const hasAddress = Boolean(owner.street || owner.postalCode || owner.city || owner.country);
 ---
 
 <BaseLayout title="Impressum" description="Impressum von analogcam.de.">
   <section class="page-head compact legal-template" aria-labelledby="legal-title">
-    <p class="eyebrow">Vorlage</p>
+    <p class="eyebrow">Rechtliches</p>
     <h1 id="legal-title">Impressum</h1>
     <p>
-      Diese Seite enthält bewusst keinen erfundenen Rechtstext. Trage die
-      erforderlichen Angaben in <code>src/config/site.ts</code> ein und prüfe
-      den fertigen Text rechtlich vor der Veröffentlichung.
+      Diese Seite enthält nur die Angaben, die in der Website-Konfiguration
+      hinterlegt sind. Fehlende Betreiberangaben werden nicht ersetzt oder
+      erfunden.
     </p>
     <dl class="meta-list">
       <dt>Name</dt>
-      <dd>{owner.name || "[Betreibername eintragen]"}</dd>
+      <dd>{owner.name || "Noch nicht hinterlegt"}</dd>
       <dt>Anschrift</dt>
       <dd>
-        {owner.street || "[Straße und Hausnummer]"}<br />
-        {owner.postalCode || "[PLZ]"} {owner.city || "[Ort]"}<br />
-        {owner.country || "[Land]"}
+        {
+          hasAddress ? (
+            <>
+              {owner.street && <>{owner.street}<br /></>}
+              {(owner.postalCode || owner.city) && (
+                <>
+                  {owner.postalCode} {owner.city}<br />
+                </>
+              )}
+              {owner.country}
+            </>
+          ) : (
+            "Noch nicht hinterlegt"
+          )
+        }
       </dd>
       <dt>E-Mail</dt>
-      <dd>{owner.email || "[E-Mail-Adresse]"}</dd>
+      <dd>{owner.email || "Noch nicht hinterlegt"}</dd>
     </dl>
   </section>
 </BaseLayout>

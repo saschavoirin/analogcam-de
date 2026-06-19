@@ -17,6 +17,15 @@ const {
 const pageTitle = title === site.title ? site.title : `${title} · ${site.title}`;
 const canonicalUrl = new URL(Astro.url.pathname, site.url).toString();
 const ogImage = image ? new URL(image, site.url).toString() : undefined;
+const currentPath = Astro.url.pathname;
+const navItems = [
+  { label: "Start", href: "/" },
+  { label: "Archiv", href: "/archiv/" },
+];
+
+function isActiveNav(href: string) {
+  return href === "/" ? currentPath === "/" : currentPath.startsWith(href);
+}
 ---
 
 <!doctype html>
@@ -39,23 +48,43 @@ const ogImage = image ? new URL(image, site.url).toString() : undefined;
   <body>
     <a class="skip-link" href="#inhalt">Zum Inhalt springen</a>
     <header class="site-header">
-      <a class="wordmark" href="/" aria-label="analogcam.de Startseite">
-        analogcam.de
-      </a>
-      <nav class="site-nav" aria-label="Hauptnavigation">
-        <a href="/">Start</a>
-        <a href="/archiv/">Archiv</a>
-      </nav>
+      <div class="site-header__inner">
+        <a class="wordmark" href="/" aria-label="analogcam.de Startseite">
+          <span class="wordmark__mark" aria-hidden="true"></span>
+          <span class="wordmark__text">analogcam.de</span>
+        </a>
+        <nav class="site-nav" aria-label="Hauptnavigation">
+          {
+            navItems.map((item) => {
+              const active = isActiveNav(item.href);
+              return (
+                <a
+                  href={item.href}
+                  class:list={[active && "is-active"]}
+                  aria-current={active ? "page" : undefined}
+                >
+                  {item.label}
+                </a>
+              );
+            })
+          }
+        </nav>
+      </div>
     </header>
     <main id="inhalt" tabindex="-1">
       <slot />
     </main>
     <footer class="site-footer">
-      <p>{site.title}</p>
-      <nav aria-label="Rechtliches">
-        <a href="/impressum/">Impressum</a>
-        <a href="/datenschutz/">Datenschutz</a>
-      </nav>
+      <div class="site-footer__inner">
+        <div>
+          <p class="footer-brand">{site.title}</p>
+          <p class="footer-line">Digitale Präzision mit analoger Wärme.</p>
+        </div>
+        <nav aria-label="Rechtliches">
+          <a href="/impressum/">Impressum</a>
+          <a href="/datenschutz/">Datenschutz</a>
+        </nav>
+      </div>
     </footer>
   </body>
 </html>

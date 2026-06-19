@@ -7,20 +7,77 @@ import { formatDate, getAlbumUrl, getPublishedAlbums } from "@lib/albums";
 
 const albums = await getPublishedAlbums();
 const recentAlbums = albums.slice(0, 12);
+const heroAlbum = recentAlbums[0];
+const heroCover = heroAlbum ? getAlbumCover(heroAlbum) : undefined;
 ---
 
 <BaseLayout title={site.title} description={site.description}>
-  <section class="intro-shell" aria-labelledby="start-title">
-    <p class="eyebrow">Analoge Fotografie</p>
-    <h1 id="start-title">{site.title}</h1>
-    {site.intro && <p class="intro-copy">{site.intro}</p>}
+  <section class="hero" aria-labelledby="start-title">
+    <div class="hero__copy">
+      <p class="eyebrow">Analoge Fotografie</p>
+      <h1 id="start-title">{site.title}</h1>
+      {site.intro && <p class="intro-copy">{site.intro}</p>}
+      <div class="action-row" aria-label="Primäre Aktionen">
+        <a class="button button--primary" href="#serien">Serien ansehen</a>
+        <a class="button button--secondary" href="/archiv/">Archiv öffnen</a>
+      </div>
+    </div>
+
+    <div class="hero__visual" aria-label={heroCover ? `Titelbild aus ${heroAlbum?.data.title}` : "Filmrahmen"}>
+      {
+        heroCover && heroAlbum ? (
+          <a class="film-frame film-frame--photo" href={getAlbumUrl(heroAlbum)}>
+            <Picture
+              src={heroCover}
+              alt=""
+              widths={[640, 1280, 2400]}
+              sizes="(min-width: 900px) 42vw, 100vw"
+              formats={["webp"]}
+              loading="eager"
+              fetchpriority="high"
+              decoding="async"
+            />
+            <span class="film-caption">
+              <span>{heroAlbum.data.title}</span>
+              <time datetime={heroAlbum.data.date.toISOString()}>
+                {formatDate(heroAlbum.data.date)}
+              </time>
+            </span>
+          </a>
+        ) : (
+          <div class="film-frame film-frame--empty" aria-hidden="true">
+            <span class="film-frame__index">AC-01</span>
+            <span class="film-frame__aperture"></span>
+            <span class="film-frame__meter">1/125 · f/2.8 · ISO 400</span>
+          </div>
+        )
+      }
+    </div>
+
+    <dl class="hero-facts" aria-label="Archivmerkmale">
+      <div>
+        <dt>Format</dt>
+        <dd>Serien</dd>
+      </div>
+      <div>
+        <dt>Material</dt>
+        <dd>Film</dd>
+      </div>
+      <div>
+        <dt>Rhythmus</dt>
+        <dd>Kuratiert</dd>
+      </div>
+    </dl>
   </section>
 
   {
     recentAlbums.length > 0 ? (
-      <section class="album-index" aria-labelledby="latest-title">
+      <section class="album-index" id="serien" aria-labelledby="latest-title">
         <div class="section-heading">
-          <h2 id="latest-title">Neueste Alben</h2>
+          <div>
+            <p class="eyebrow">Kontaktbogen</p>
+            <h2 id="latest-title">Neueste Serien</h2>
+          </div>
           <p>{recentAlbums.length} sichtbar</p>
         </div>
         <div class="album-grid">
@@ -29,18 +86,20 @@ const recentAlbums = albums.slice(0, 12);
             return (
               <article class="album-card">
                 <a href={getAlbumUrl(album)} class="album-card__link">
-                  {cover && (
-                    <Picture
-                      src={cover}
-                      alt=""
-                      widths={[640, 1280, 2400]}
-                      sizes="(min-width: 900px) 42vw, 100vw"
-                      formats={["webp"]}
-                      loading={index === 0 ? "eager" : "lazy"}
-                      fetchpriority={index === 0 ? "high" : "auto"}
-                      decoding="async"
-                    />
-                  )}
+                  <span class="album-card__media">
+                    {cover && (
+                      <Picture
+                        src={cover}
+                        alt=""
+                        widths={[640, 1280, 2400]}
+                        sizes="(min-width: 900px) 42vw, 100vw"
+                        formats={["webp"]}
+                        loading={index === 0 ? "eager" : "lazy"}
+                        fetchpriority={index === 0 ? "high" : "auto"}
+                        decoding="async"
+                      />
+                    )}
+                  </span>
                   <span class="album-card__text">
                     <span>{album.data.title}</span>
                     <time datetime={album.data.date.toISOString()}>
@@ -54,13 +113,14 @@ const recentAlbums = albums.slice(0, 12);
         </div>
       </section>
     ) : (
-      <section class="empty-state" aria-labelledby="empty-title">
+      <section class="empty-state empty-state--featured" id="serien" aria-labelledby="empty-title">
         <div class="empty-state__copy">
           <p class="eyebrow">Kontaktbogen</p>
           <h2 id="empty-title">Noch keine veröffentlichten Alben</h2>
           <p>
-            Die erste Serie erscheint hier, sobald ein Album veröffentlicht ist.
+            Die erste Serie erscheint hier, sobald ein Album kuratiert und veröffentlicht ist.
           </p>
+          <a class="text-link" href="/archiv/">Zum Archiv</a>
         </div>
         <div class="contact-sheet" aria-hidden="true">
           {Array.from({ length: 8 }).map((_, index) => (
