@@ -55,11 +55,18 @@ const recentAlbums = albums.slice(0, 12);
       </section>
     ) : (
       <section class="empty-state" aria-labelledby="empty-title">
-        <h2 id="empty-title">Noch keine veröffentlichten Alben</h2>
-        <p>
-          Die Website ist bereit. Sobald ein Album auf
-          <code>published</code> gesetzt wird, erscheint es hier.
-        </p>
+        <div class="empty-state__copy">
+          <p class="eyebrow">Kontaktbogen</p>
+          <h2 id="empty-title">Noch keine veröffentlichten Alben</h2>
+          <p>
+            Die erste Serie erscheint hier, sobald ein Album veröffentlicht ist.
+          </p>
+        </div>
+        <div class="contact-sheet" aria-hidden="true">
+          {Array.from({ length: 8 }).map((_, index) => (
+            <span class={`contact-sheet__frame frame-${index + 1}`} />
+          ))}
+        </div>
       </section>
     )
   }
