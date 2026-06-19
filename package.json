@@ -1,0 +1,38 @@
+{
+  "name": "analogcam-de",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=24 <25",
+    "npm": ">=11"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro:check": "astro check",
+    "check": "npm run astro:check && npm run photos:validate",
+    "photos:validate": "node scripts/photos-validate.mjs",
+    "size:check": "node scripts/size-check.mjs",
+    "album:new": "node scripts/album-new.mjs",
+    "photos:import": "node scripts/photos-import.mjs",
+    "album:archive": "node scripts/album-archive.mjs"
+  },
+  "dependencies": {
+    "@astrojs/sitemap": "^3.7.3",
+    "astro": "^6.4.8"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.9",
+    "sharp": "^0.35.2",
+    "typescript": "^6.0.3",
+    "yaml": "^2.9.0"
+  },
+  "overrides": {
+    "esbuild": "^0.28.1",
+    "yaml-language-server": {
+      "yaml": "^2.9.0"
+    }
+  }
+}

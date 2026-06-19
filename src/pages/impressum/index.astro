@@ -1,0 +1,30 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { site } from "@config/site";
+
+const owner = site.owner;
+---
+
+<BaseLayout title="Impressum" description="Impressum von analogcam.de.">
+  <section class="page-head compact legal-template" aria-labelledby="legal-title">
+    <p class="eyebrow">Vorlage</p>
+    <h1 id="legal-title">Impressum</h1>
+    <p>
+      Diese Seite enthält bewusst keinen erfundenen Rechtstext. Trage die
+      erforderlichen Angaben in <code>src/config/site.ts</code> ein und prüfe
+      den fertigen Text rechtlich vor der Veröffentlichung.
+    </p>
+    <dl class="meta-list">
+      <dt>Name</dt>
+      <dd>{owner.name || "[Betreibername eintragen]"}</dd>
+      <dt>Anschrift</dt>
+      <dd>
+        {owner.street || "[Straße und Hausnummer]"}<br />
+        {owner.postalCode || "[PLZ]"} {owner.city || "[Ort]"}<br />
+        {owner.country || "[Land]"}
+      </dd>
+      <dt>E-Mail</dt>
+      <dd>{owner.email || "[E-Mail-Adresse]"}</dd>
+    </dl>
+  </section>
+</BaseLayout>

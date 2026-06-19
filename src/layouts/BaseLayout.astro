@@ -1,0 +1,61 @@
+---
+import { site } from "@config/site";
+import "../styles/global.css";
+
+type Props = {
+  title?: string;
+  description?: string;
+  image?: string;
+};
+
+const {
+  title = site.title,
+  description = site.description,
+  image = site.defaultOgImage,
+} = Astro.props;
+
+const pageTitle = title === site.title ? site.title : `${title} · ${site.title}`;
+const canonicalUrl = new URL(Astro.url.pathname, site.url).toString();
+const ogImage = image ? new URL(image, site.url).toString() : undefined;
+---
+
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalUrl} />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={site.title} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalUrl} />
+    {ogImage && <meta property="og:image" content={ogImage} />}
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <script src="/scripts/lightbox.js" defer is:inline></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#inhalt">Zum Inhalt springen</a>
+    <header class="site-header">
+      <a class="wordmark" href="/" aria-label="analogcam.de Startseite">
+        analogcam.de
+      </a>
+      <nav class="site-nav" aria-label="Hauptnavigation">
+        <a href="/">Start</a>
+        <a href="/archiv/">Archiv</a>
+      </nav>
+    </header>
+    <main id="inhalt" tabindex="-1">
+      <slot />
+    </main>
+    <footer class="site-footer">
+      <p>{site.title}</p>
+      <nav aria-label="Rechtliches">
+        <a href="/impressum/">Impressum</a>
+        <a href="/datenschutz/">Datenschutz</a>
+      </nav>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,11 @@
+node_modules/
+dist/
+.astro/
+.DS_Store
+.analogcam.local.json
+npm-debug.log*
+
+# Keep original scans outside this repository.
+originals/
+raw/
+scans/

@@ -1,0 +1,50 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import {
+  formatDate,
+  getAlbumUrl,
+  getArchivedAlbums,
+  groupArchivedAlbumsByYear,
+} from "@lib/albums";
+
+const archivedAlbums = await getArchivedAlbums();
+const groups = groupArchivedAlbumsByYear(archivedAlbums);
+---
+
+<BaseLayout title="Archiv" description="Archivierte analoge Fotoalben.">
+  <section class="page-head" aria-labelledby="archive-title">
+    <p class="eyebrow">Archiv</p>
+    <h1 id="archive-title">Archivierte Alben</h1>
+    <p>
+      Ältere Alben verschwinden nicht. Sie werden hier gesammelt und bleiben
+      über ihre direkten URLs erreichbar.
+    </p>
+  </section>
+
+  {
+    groups.length > 0 ? (
+      <div class="archive-list">
+        {groups.map(([year, albums]) => (
+          <section class="archive-year" aria-labelledby={`year-${year}`}>
+            <h2 id={`year-${year}`}>{year}</h2>
+            <ol>
+              {albums.map((album) => (
+                <li>
+                  <a href={getAlbumUrl(album)}>{album.data.title}</a>
+                  <time datetime={album.data.date.toISOString()}>
+                    {formatDate(album.data.date)}
+                  </time>
+                </li>
+              ))}
+            </ol>
+          </section>
+        ))}
+      </div>
+    ) : (
+      <section class="empty-state">
+        <h2>Kein Archivinhalt</h2>
+        <p>Archivierte Alben erscheinen hier, sobald ihr Status auf archived gesetzt wurde.</p>
+      </section>
+    )
+  }
+</BaseLayout>

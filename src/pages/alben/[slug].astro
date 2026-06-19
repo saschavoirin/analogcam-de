@@ -1,0 +1,125 @@
+---
+import { Picture } from "astro:assets";
+import { render } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import {
+  getAlbumMeta,
+  getVisibleAlbums,
+} from "@lib/albums";
+import { getAlbumCover, getAlbumPhotos } from "@lib/images";
+
+export async function getStaticPaths() {
+  const albums = await getVisibleAlbums();
+
+  return albums.map((album) => ({
+    params: { slug: album.data.slug },
+    props: { album },
+  }));
+}
+
+const { album } = Astro.props;
+const { Content } = await render(album);
+const photos = getAlbumPhotos(album).filter((photo) => photo.image);
+const cover = getAlbumCover(album);
+const meta = getAlbumMeta(album);
+---
+
+<BaseLayout
+  title={album.data.title}
+  description={album.data.description ?? `Album ${album.data.title} auf analogcam.de`}
+  image={cover?.src}
+>
+  <article class="album-page">
+    <header class="album-head">
+      <a class="back-link" href={album.data.status === "archived" ? "/archiv/" : "/"}>
+        Zurück
+      </a>
+      <p class="eyebrow">
+        {album.data.status === "archived" ? "Archiviertes Album" : "Album"}
+      </p>
+      <h1>{album.data.title}</h1>
+      {album.data.description && <p class="album-description">{album.data.description}</p>}
+      <dl class="meta-list">
+        {meta.map(([label, value]) => (
+          <>
+            <dt>{label}</dt>
+            <dd>{value}</dd>
+          </>
+        ))}
+      </dl>
+      <Content />
+    </header>
+
+    {
+      photos.length > 0 ? (
+        <section class="gallery" aria-label={`Fotos aus ${album.data.title}`}>
+          {photos.map((photo, index) => (
+            <figure class="photo">
+              <a
+                href={photo.image!.src}
+                class="photo__link"
+                data-lightbox-item
+                data-full-src={photo.image!.src}
+                data-alt={photo.alt}
+                data-caption={photo.caption ?? ""}
+                data-index={index}
+              >
+                <Picture
+                  src={photo.image!}
+                  alt={photo.alt}
+                  widths={[640, 1280, 2400]}
+                  sizes="(min-width: 1200px) 34vw, (min-width: 760px) 48vw, 100vw"
+                  formats={["webp"]}
+                  loading={index === 0 ? "eager" : "lazy"}
+                  fetchpriority={index === 0 ? "high" : "auto"}
+                  decoding="async"
+                />
+              </a>
+              {photo.caption && <figcaption>{photo.caption}</figcaption>}
+            </figure>
+          ))}
+        </section>
+      ) : (
+        <section class="empty-state">
+          <h2>Noch keine Fotos</h2>
+          <p>Dieses Album ist angelegt, enthält aber noch keine importierten Webbilder.</p>
+        </section>
+      )
+    }
+  </article>
+
+  {
+    photos.length > 0 && (
+      <dialog class="lightbox" aria-label="Bildbetrachter" data-lightbox>
+        <div class="lightbox__top">
+          <p data-lightbox-counter>
+            Foto 1 von {photos.length}
+          </p>
+          <button type="button" class="text-button" data-lightbox-close>
+            Schließen
+          </button>
+        </div>
+        <div class="lightbox__stage">
+          <button
+            type="button"
+            class="lightbox__nav lightbox__nav--prev"
+            data-lightbox-prev
+            aria-label="Vorheriges Foto"
+          >
+            Zurück
+          </button>
+          <img data-lightbox-image alt="" />
+          <button
+            type="button"
+            class="lightbox__nav lightbox__nav--next"
+            data-lightbox-next
+            aria-label="Nächstes Foto"
+          >
+            Weiter
+          </button>
+        </div>
+        <p class="lightbox__caption" data-lightbox-caption></p>
+      </dialog>
+    )
+  }
+</BaseLayout>

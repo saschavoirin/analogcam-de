@@ -1,0 +1,66 @@
+---
+import { Picture } from "astro:assets";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { site } from "@config/site";
+import { getAlbumCover } from "@lib/images";
+import { formatDate, getAlbumUrl, getPublishedAlbums } from "@lib/albums";
+
+const albums = await getPublishedAlbums();
+const recentAlbums = albums.slice(0, 12);
+---
+
+<BaseLayout title={site.title} description={site.description}>
+  <section class="intro-shell" aria-labelledby="start-title">
+    <p class="eyebrow">Analoge Fotografie</p>
+    <h1 id="start-title">{site.title}</h1>
+    {site.intro && <p class="intro-copy">{site.intro}</p>}
+  </section>
+
+  {
+    recentAlbums.length > 0 ? (
+      <section class="album-index" aria-labelledby="latest-title">
+        <div class="section-heading">
+          <h2 id="latest-title">Neueste Alben</h2>
+          <p>{recentAlbums.length} sichtbar</p>
+        </div>
+        <div class="album-grid">
+          {recentAlbums.map((album, index) => {
+            const cover = getAlbumCover(album);
+            return (
+              <article class="album-card">
+                <a href={getAlbumUrl(album)} class="album-card__link">
+                  {cover && (
+                    <Picture
+                      src={cover}
+                      alt=""
+                      widths={[640, 1280, 2400]}
+                      sizes="(min-width: 900px) 42vw, 100vw"
+                      formats={["webp"]}
+                      loading={index === 0 ? "eager" : "lazy"}
+                      fetchpriority={index === 0 ? "high" : "auto"}
+                      decoding="async"
+                    />
+                  )}
+                  <span class="album-card__text">
+                    <span>{album.data.title}</span>
+                    <time datetime={album.data.date.toISOString()}>
+                      {formatDate(album.data.date)}
+                    </time>
+                  </span>
+                </a>
+              </article>
+            );
+          })}
+        </div>
+      </section>
+    ) : (
+      <section class="empty-state" aria-labelledby="empty-title">
+        <h2 id="empty-title">Noch keine veröffentlichten Alben</h2>
+        <p>
+          Die Website ist bereit. Sobald ein Album auf
+          <code>published</code> gesetzt wird, erscheint es hier.
+        </p>
+      </section>
+    )
+  }
+</BaseLayout>
